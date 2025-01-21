@@ -20,8 +20,17 @@ int opcion;
 float cantidad;
 int operacionesRealizadas = 0;
 
-char *nombreActual;
-float *saldoActual;
+char nombreActual[50];
+float saldoActual;
+
+int esCuentaValida(char cuentaIngresada[], char cuenta[]) {
+    for (int i = 0; i < 5; i++) {
+        if (cuentaIngresada[i] != cuenta[i]) {
+            return 0;
+        }
+    }
+    return 1;
+}
 
 int mostrarMenu() {
     printf("1. Consultar saldo\n");
@@ -43,28 +52,28 @@ int main() {
     fgets(cuentaIngresada, 6, stdin);
     cuentaIngresada[strcspn(cuentaIngresada, "\n")] = 0;
 
-    if (strcmp(cuentaIngresada, numeroCuenta1) == 0) {
-        nombreActual = nombre1;
-        saldoActual = &saldo1;
-    } else if (strcmp(cuentaIngresada, numeroCuenta2) == 0) {
-        nombreActual = nombre2;
-        saldoActual = &saldo2;
-    } else if (strcmp(cuentaIngresada, numeroCuenta3) == 0) {
-        nombreActual = nombre3;
-        saldoActual = &saldo3;
+    if (esCuentaValida(cuentaIngresada, numeroCuenta1)) {
+        strcpy(nombreActual, nombre1);
+        saldoActual = saldo1;
+    } else if (esCuentaValida(cuentaIngresada, numeroCuenta2)) {
+        strcpy(nombreActual, nombre2);
+        saldoActual = saldo2;
+    } else if (esCuentaValida(cuentaIngresada, numeroCuenta3)) {
+        strcpy(nombreActual, nombre3);
+        saldoActual = saldo3;
     } else {
         printf("Cuenta no valida. Intente de nuevo.\n");
         return 1;
     }
 
-    printf("Bienvenido %s, su saldo actual es $%.2f.\n", nombreActual, *saldoActual);
+    printf("Bienvenido %s, su saldo actual es $%.2f.\n", nombreActual, saldoActual);
 
     while (1) {
         opcion = mostrarMenu(); 
 
         switch (opcion) {
             case 1: 
-                printf("Su saldo actual es: $%.2f\n", *saldoActual);
+                printf("Su saldo actual es: $%.2f\n", saldoActual);
                 operacionesRealizadas++;
                 break;
 
@@ -78,12 +87,12 @@ int main() {
 
                 if (cantidad < 0) {
                     printf("No se puede retirar una cantidad negativa.\n");
-                } else if (cantidad > *saldoActual) {
+                } else if (cantidad > saldoActual) {
                     printf("No tiene suficiente saldo para realizar esta operacion.\n");
                 } else if (cantidad > MAX_RETIRO) {
                     printf("El monto maximo por transaccion es $5000.\n");
                 } else {
-                    *saldoActual -= cantidad;
+                    saldoActual -= cantidad;
                     printf("Retiro exitoso. Ha retirado $%.2f.\n", cantidad);
                     operacionesRealizadas++;
                 }
@@ -100,14 +109,14 @@ int main() {
                 if (cantidad <= 0) {
                     printf("El monto a depositar debe ser mayor que cero.\n");
                 } else {
-                    *saldoActual += cantidad;
+                    saldoActual += cantidad;
                     printf("Deposito exitoso. Ha depositado $%.2f.\n", cantidad);
                     operacionesRealizadas++;
                 }
                 break;
 
             case 4: 
-                printf("Saldo final: $%.2f\n", *saldoActual);
+                printf("Saldo final: $%.2f\n", saldoActual);
                 printf("Operaciones realizadas: %d\n", operacionesRealizadas);
                 printf("Gracias por usar el cajero automatico.\n");
                 return 0;
